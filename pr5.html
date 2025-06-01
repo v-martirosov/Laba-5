@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог товаров - SportWorld</title>
+    <style>
+        /*Не смог сделать сам пришлось прибегнуть к помощи*/
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #333;
+            --gray-color: #95a5a6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header__container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .header__logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .header__nav {
+            display: flex;
+        }
+        
+        .header__nav-list {
+            display: flex;
+            list-style: none;
+        }
+        
+        .header__nav-item {
+            margin-left: 1.5rem;
+        }
+        
+        .header__nav-link {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            padding: 0.5rem;
+        }
+        
+        .header__nav-link:hover {
+            color: #f39c12;
+        }
+        
+        .main {
+            flex: 1;
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .main__title {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+        
+        .filters-container {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .filters-form {
+            flex: 0 0 250px;
+            background-color: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            height: fit-content;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .filters-form__title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .filters-form__group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .filters-form__label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .filters-form__checkbox-group {
+            margin-bottom: 0.5rem;
+        }
+        
+        .filters-form__checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .filters-form__checkbox {
+            margin-right: 0.5rem;
+        }
+        
+        .filters-form__radio-group {
+            margin-bottom: 0.5rem;
+        }
+        
+        .filters-form__radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .filters-form__radio {
+            margin-right: 0.5rem;
+        }
+        
+        .filters-form__select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--gray-color);
+            border-radius: 5px;
+            background-color: white;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        .filters-form__select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+            outline: none;
+        }
+        
+        .filters-form__button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 100%;
+            font-weight: bold;
+        }
+        
+        .filters-form__button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .filters-form__button:active {
+            transform: translateY(0);
+        }
+        
+        .catalog {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .catalog__item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: calc(33.333% - 1.5rem);
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .catalog__item.hidden {
+            display: none;
+        }
+        
+        .catalog__item.filtering {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .catalog__item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .catalog__image-container {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .catalog__image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .catalog__item:hover .catalog__image {
+            transform: scale(1.05);
+        }
+        
+        .catalog__content {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .catalog__title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .catalog__description {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+        
+        .catalog__price {
+            font-weight: bold;
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .catalog__button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 100%;
+            font-weight: bold;
+        }
+        
+        .catalog__button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .catalog__button:active {
+            transform: translateY(0);
+        }
+        
+        .feedback {
+            margin-top: 4rem;
+            padding: 2rem;
+            background-color: var(--light-color);
+            border-radius: 8px;
+        }
+        
+        .feedback__title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+        }
+        
+        .feedback-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .feedback-form__group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .feedback-form__label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .feedback-form__input,
+        .feedback-form__select,
+        .feedback-form__textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-color);
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: inherit;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        .feedback-form__input:focus,
+        .feedback-form__select:focus,
+        .feedback-form__textarea:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+            outline: none;
+        }
+        
+        .feedback-form__textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .feedback-form__button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        .feedback-form__button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .feedback-form__button:active {
+            transform: translateY(0);
+        }
+        
+        .footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+        
+        .footer__container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .footer__info {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .footer__section {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .footer__title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #f39c12;
+        }
+        
+        .footer__links {
+            list-style: none;
+        }
+        
+        .footer__link {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer__link a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer__link a:hover {
+            color: #f39c12;
+        }
+        
+        .footer__social {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .footer__social-icon {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        
+        .footer__social-icon:hover {
+            color: #f39c12;
+        }
+        
+        .footer__copyright {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--gray-color);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @media (max-width: 1024px) {
+            .catalog__item {
+                width: calc(50% - 1.5rem);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header__container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .header__nav-list {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .header__nav-item {
+                margin: 0 0.5rem;
+            }
+            
+            .filters-container {
+                flex-direction: column;
+            }
+            
+            .filters-form {
+                flex: 1;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .catalog__item {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header__container">
+            <a href="index.html" class="header__logo">SportWorld</a>
+            <nav class="header__nav">
+                <ul class="header__nav-list">
+                    <li class="header__nav-item"><a href="index.html" class="header__nav-link">Главная</a></li>
+                    <li class="header__nav-item"><a href="#" class="header__nav-link">Каталог</a></li>
+                    <li class="header__nav-item"><a href="#" class="header__nav-link">О нас</a></li>
+                    <li class="header__nav-item"><a href="#" class="header__nav-link">Контакты</a></li>
+                    <li class="header__nav-item"><a href="#" class="header__nav-link">Корзина</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="main">
+        <h1 class="main__title">Каталог товаров</h1>
+        
+        <div class="filters-container">
+            <form class="filters-form" id="filterForm">
+                <h3 class="filters-form__title">Фильтры товаров</h3>
+                
+                <div class="filters-form__group">
+                    <label class="filters-form__label">Категория</label>
+                    <div class="filters-form__checkbox-group">
+                        <label class="filters-form__checkbox-label">
+                            <input type="checkbox" class="filters-form__checkbox" name="category" value="football" checked>
+                            Футбол
+                        </label>
+                    </div>
+                    <div class="filters-form__checkbox-group">
+                        <label class="filters-form__checkbox-label">
+                            <input type="checkbox" class="filters-form__checkbox" name="category" value="running" checked>
+                            Бег
+                        </label>
+                    </div>
+                    <div class="filters-form__checkbox-group">
+                        <label class="filters-form__checkbox-label">
+                            <input type="checkbox" class="filters-form__checkbox" name="category" value="fitness" checked>
+                            Фитнес
+                        </label>
+                    </div>
+                    <div class="filters-form__checkbox-group">
+                        <label class="filters-form__checkbox-label">
+                            <input type="checkbox" class="filters-form__checkbox" name="category" value="yoga" checked>
+                            Йога
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="filters-form__group">
+                    <label class="filters-form__label">Ценовой диапазон</label>
+                    <div class="filters-form__radio-group">
+                        <label class="filters-form__radio-label">
+                            <input type="radio" class="filters-form__radio" name="price" value="all" checked>
+                            Любой
+                        </label>
+                    </div>
+                    <div class="filters-form__radio-group">
+                        <label class="filters-form__radio-label">
+                            <input type="radio" class="filters-form__radio" name="price" value="low">
+                            До 3 000 ₽
+                        </label>
+                    </div>
+                    <div class="filters-form__radio-group">
+                        <label class="filters-form__radio-label">
+                            <input type="radio" class="filters-form__radio" name="price" value="medium">
+                            3 000 - 7 000 ₽
+                        </label>
+                    </div>
+                    <div class="filters-form__radio-group">
+                        <label class="filters-form__radio-label">
+                            <input type="radio" class="filters-form__radio" name="price" value="high">
+                            От 7 000 ₽
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="filters-form__group">
+                    <label for="brand" class="filters-form__label">Бренд</label>
+                    <select id="brand" class="filters-form__select" name="brand">
+                        <option value="all">Все бренды</option>
+                        <option value="nike">Nike</option>
+                        <option value="adidas">Adidas</option>
+                        <option value="puma">Puma</option>
+                        <option value="reebok">Reebok</option>
+                        <option value="xiaomi">Xiaomi</option>
+                    </select>
+                </div>
+                
+                <div class="filters-form__group">
+                    <label for="sort" class="filters-form__label">Сортировка</label>
+                    <select id="sort" class="filters-form__select" name="sort">
+                        <option value="popular">По популярности</option>
+                        <option value="price-asc">По возрастанию цены</option>
+                        <option value="price-desc">По убыванию цены</option>
+                        <option value="newest">Сначала новые</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="filters-form__button">Применить фильтры</button>
+            </form>
+            
+            <div class="catalog" id="catalog">
+                <div class="catalog__item" data-category="running" data-brand="nike" data-price="8499" data-date="2025-01-15">
+                    <div class="catalog__image-container">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Беговые кроссовки Nike" class="catalog__image">
+                    </div>
+                    <div class="catalog__content">
+                        <h3 class="catalog__title">Беговые кроссовки Nike Air Zoom</h3>
+                        <p class="catalog__description">Легкие и удобные кроссовки для бега с амортизацией. Подходят для длительных тренировок.</p>
+                        <div class="catalog__price">8 499 ₽</div>
+                        <button class="catalog__button">Добавить в корзину</button>
+                    </div>
+                </div>
+                
+                <div class="catalog__item" data-category="football" data-brand="adidas" data-price="4999" data-date="2025-02-20">
+                    <div class="catalog__image-container">
+                        <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Футбольный мяч Adidas" class="catalog__image">
+                    </div>
+                    <div class="catalog__content">
+                        <h3 class="catalog__title">Футбольный мяч Adidas Champions League</h3>
+                        <p class="catalog__description">Официальный мяч Лиги Чемпионов. Размер 5, вес 450 г, синтетическая кожа.</p>
+                        <div class="catalog__price">4 999 ₽</div>
+                        <button class="catalog__button">Добавить в корзину</button>
+                    </div>
+                </div>
+                
+                <div class="catalog__item" data-category="fitness" data-brand="reebok" data-price="3299" data-date="2025-01-05">
+                    <div class="catalog__image-container">
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Гантели" class="catalog__image">
+                    </div>
+                    <div class="catalog__content">
+                        <h3 class="catalog__title">Гантели стальные 10 кг</h3>
+                        <p class="catalog__description">Прорезиненные блины для комфортных тренировок. Хромированный гриф.</p>
+                        <div class="catalog__price">3 299 ₽</div>
+                        <button class="catalog__button">Добавить в корзину</button>
+                    </div>
+                </div>
+                
+                <div class="catalog__item" data-category="running" data-brand="puma" data-price="25999" data-date="2024-12-10">
+                    <div class="catalog__image-container">
+                        <img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Горный велосипед" class="catalog__image">
+                    </div>
+                    <div class="catalog__content">
+                        <h3 class="catalog__title">Горный велосипед Stels Navigator-500</h3>
+                        <p class="catalog__description">21 скорость, алюминиевая рама, дисковые тормоза, амортизационная вилка.</p>
+                        <div class="catalog__price">25 999 ₽</div>
+                        <button class="catalog__button">Добавить в корзину</button>
+                    </div>
+                </div>
+                
+                <div class="catalog__item" data-category="yoga" data-brand="nike" data-price="1799" data-date="2025-03-01">
+                    <div class="catalog__image-container">
+                        <img src="https://images.unsplash.com/photo-1545389336-cf090694435e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Йога коврик" class="catalog__image">
+                    </div>
+                    <div class="catalog__content">
+                        <h3 class="catalog__title">Йога коврик Premium</h3>
+                        <p class="catalog__description">Антискользящий коврик для йоги, толщина 6 мм, с чехлом и ремнем для переноски.</p>
+                        <div class="catalog__price">1 799 ₽</div>
+                        <button class="catalog__button">Добавить в корзину</button>
+                    </div>
+                </div>
+                
+                <div class="catalog__item" data-category="fitness" data-brand="adidas" data-price="3599" data-date="2025-02-15">
+                    <div class="catalog__image-container">
+                        <img src="https://images.unsplash.com/photo-1599744357905-6baff6d6fb1c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Спортивный рюкзак" class="catalog__image">
+                    </div>
+                    <div class="catalog__content">
+                        <h3 class="catalog__title">Спортивный рюкзак Adidas</h3>
+                        <p class="catalog__description">Вместительный рюкзак для тренировок с отделением для обуви и карманом для бутылки.</p>
+                        <div class="catalog__price">3 599 ₽</div>
+                        <button class="catalog__button">Добавить в корзину</button>
+                    </div>
+                </div>
+                
+                <div class="catalog__item" data-category="fitness" data-brand="xiaomi" data-price="3299" data-date="2025-03-10">
+                    <div class="catalog__image-container">
+                        <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Фитнес-браслет" class="catalog__image">
+                    </div>
+                    <div class="catalog__content">
+                        <h3 class="catalog__title">Фитнес-браслет Xiaomi Mi Band 6</h3>
+                        <p class="catalog__description">Мониторинг пульса, сна, шагов. Водонепроницаемость, уведомления, AMOLED-экран.</p>
+                        <div class="catalog__price">3 299 ₽</div>
+                        <button class="catalog__button">Добавить в корзину</button>
+                    </div>
+                </div>
+                
+                <div class="catalog__item" data-category="fitness" data-brand="nike" data-price="4299" data-date="2025-01-20">
+                    <div class="catalog__image-container">
+                        <img src="https://images.unsplash.com/photo-1595079835353-a4029a0132c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Спортивные штаны" class="catalog__image">
+                    </div>
+                    <div class="catalog__content">
+                        <h3 class="catalog__title">Спортивные штаны Nike Dri-FIT</h3>
+                        <p class="catalog__description">Легкие дышащие штаны для тренировок с влагоотводящей технологией.</p>
+                        <div class="catalog__price">4 299 ₽</div>
+                        <button class="catalog__button">Добавить в корзину</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <section class="feedback" id="feedback">
+            <h2 class="feedback__title">Обратная связь</h2>
+            <form class="feedback-form" id="feedbackForm">
+                <div class="feedback-form__group">
+                    <label for="name" class="feedback-form__label">Ваше имя</label>
+                    <input type="text" id="name" class="feedback-form__input" name="name" required>
+                </div>
+                
+                <div class="feedback-form__group">
+                    <label for="email" class="feedback-form__label">Email</label>
+                    <input type="email" id="email" class="feedback-form__input" name="email" required>
+                </div>
+                
+                <div class="feedback-form__group">
+                    <label for="subject" class="feedback-form__label">Тема сообщения</label>
+                    <select id="subject" class="feedback-form__select" name="subject" required>
+                        <option value="">Выберите тему</option>
+                        <option value="question">Вопрос о товаре</option>
+                        <option value="order">Заказ и доставка</option>
+                        <option value="return">Возврат и обмен</option>
+                        <option value="cooperation">Сотрудничество</option>
+                        <option value="other">Другое</option>
+                    </select>
+                </div>
+                
+                <div class="feedback-form__group">
+                    <label for="message" class="feedback-form__label">Сообщение</label>
+                    <textarea id="message" class="feedback-form__textarea" name="message" required></textarea>
+                </div>
+                
+                <button type="submit" class="feedback-form__button">Отправить сообщение</button>
+            </form>
+        </section>
+    </main>
+    
+    <footer class="footer">
+        <div class="footer__container">
+            <div class="footer__info">
+                <div class="footer__section">
+                    <h3 class="footer__title">О компании</h3>
+                    <ul class="footer__links">
+                        <li class="footer__link"><a href="#">О нас</a></li>
+                        <li class="footer__link"><a href="#">Наши магазины</a></li>
+                        <li class="footer__link"><a href="#">Вакансии</a></li>
+                        <li class="footer__link"><a href="#">Новости</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer__section">
+                    <h3 class="footer__title">Помощь</h3>
+                    <ul class="footer__links">
+                        <li class="footer__link"><a href="#">Доставка и оплата</a></li>
+                        <li class="footer__link"><a href="#">Возврат и обмен</a></li>
+                        <li class="footer__link"><a href="#">Гарантия</a></li>
+                        <li class="footer__link"><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer__section">
+                    <h3 class="footer__title">Контакты</h3>
+                    <ul class="footer__links">
+                        <li class="footer__link"><a href="tel:+77777777777">+7 (777) 777-77-77</a></li>
+                        <li class="footer__link"><a href="mailto:info@sportworld.ru">info@sportworld.ru</a></li>
+                        <li class="footer__link">Владимир, ул. Горького, 106</li>
+                        <li class="footer__link">Ежедневно с 9:00 до 21:00</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer__social">
+                <a href="#" class="footer__social-icon">Facebook</a>
+                <a href="#" class="footer__social-icon">Instagram</a>
+                <a href="#" class="footer__social-icon">VK</a>
+                <a href="#" class="footer__social-icon">YouTube</a>
+            </div>
+            
+            <p class="footer__copyright">© 2025 SportWorld. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function filterProducts() {
+                const formData = new FormData(document.getElementById('filterForm'));
+                const selectedCategories = [];
+                const priceRange = formData.get('price');
+                const brand = formData.get('brand');
+                const sortMethod = formData.get('sort');
+                
+                document.querySelectorAll('input[name="category"]:checked').forEach(checkbox => {
+                    selectedCategories.push(checkbox.value);
+                });
+                
+                const catalogItems = document.querySelectorAll('.catalog__item');
+                catalogItems.forEach(item => {
+                    item.classList.add('filtering');
+                });
+                
+                setTimeout(() => {
+                    catalogItems.forEach(item => {
+                        const itemCategory = item.dataset.category;
+                        const itemBrand = item.dataset.brand;
+                        const itemPrice = parseInt(item.dataset.price);
+                        
+                        const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(itemCategory);
+                        
+                        let priceMatch = true;
+                        if (priceRange === 'low') {
+                            priceMatch = itemPrice < 3000;
+                        } else if (priceRange === 'medium') {
+                            priceMatch = itemPrice >= 3000 && itemPrice <= 7000;
+                        } else if (priceRange === 'high') {
+                            priceMatch = itemPrice > 7000;
+                        }
+                        
+                        const brandMatch = brand === 'all' || brand === itemBrand.toLowerCase();
+                        
+                        if (categoryMatch && priceMatch && brandMatch) {
+                            item.classList.remove('hidden');
+                        } else {
+                            item.classList.add('hidden');
+                        }
+                        
+                        item.classList.remove('filtering');
+                    });
+                    
+                    sortProducts(sortMethod);
+                }, 500);
+            }
+            
+            function sortProducts(method) {
+                const catalog = document.getElementById('catalog');
+                const items = Array.from(document.querySelectorAll('.catalog__item:not(.hidden)'));
+                
+                items.sort((a, b) => {
+                    switch(method) {
+                        case 'price-asc':
+                            return parseInt(a.dataset.price) - parseInt(b.dataset.price);
+                        case 'price-desc':
+                            return parseInt(b.dataset.price) - parseInt(a.dataset.price);
+                        case 'newest':
+                            return new Date(b.dataset.date) - new Date(a.dataset.date);
+                        default:
+                            return 0;
+                    }
+                });
+                
+                catalog.innerHTML = '';
+                items.forEach(item => {
+                    catalog.appendChild(item);
+                });
+            }
+            
+            document.getElementById('filterForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                filterProducts();
+            });
+            
+            document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.');
+                this.reset();
+            });
+            
+            filterProducts();
+        });
+    </script>
+</body>
+</html>

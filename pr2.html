@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библиотека стилей для элементов формы</title>
+    <style>
+        /* Базовые стили для всех элементов */
+        .form-element {
+            margin: 10px 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        /* Стили для input в разных состояниях */
+        .input-default {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-valid {
+            padding: 8px 12px;
+            border: 1px solid #4CAF50;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #f0fff0;
+            transition: all 0.3s ease;
+        }
+        
+        .input-invalid {
+            padding: 8px 12px;
+            border: 1px solid #f44336;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #fff0f0;
+            transition: all 0.3s ease;
+        }
+        
+        /* Стили для чекбоксов */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-label {
+            margin-left: 8px;
+        }
+        
+        .checkbox-default {
+            width: 16px;
+            height: 16px;
+            accent-color: #4CAF50;
+            cursor: pointer;
+        }
+        
+        /* Стили для радио-кнопок */
+        .radio-group {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .radio-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .radio-label {
+            margin-left: 8px;
+        }
+        
+        .radio-default {
+            width: 16px;
+            height: 16px;
+            accent-color: #2196F3;
+            cursor: pointer;
+        }
+        
+        /* Стили для кнопок */
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+        
+        .button-success {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .button-success:hover {
+            background-color: #45a049;
+        }
+        
+        .button-danger {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .button-danger:hover {
+            background-color: #d32f2f;
+        }
+        
+        .button-disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+        }
+        
+        /* Стили для textarea */
+        .textarea-default {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            min-height: 80px;
+            width: 100%;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+        
+        /* Группировка элементов */
+        .form-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+        
+        .form-group-title {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-group">
+        <h3 class="form-group-title">Inputs</h3>
+        
+        <div class="form-element">
+            <input type="text" class="input-default" placeholder="Enter some text...">
+            <span>default input</span>
+        </div>
+        
+        <div class="form-element">
+            <input type="text" class="input-valid" value="valid text">
+            <span>valid input</span>
+        </div>
+        
+        <div class="form-element">
+            <input type="text" class="input-invalid" value="invalid text">
+            <span>invalid input</span>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <h3 class="form-group-title">Check boxes</h3>
+        
+        <div class="form-element checkbox-container">
+            <input type="checkbox" class="checkbox-default" id="subscribe1" checked>
+            <label for="subscribe1" class="checkbox-label">Subscribe (checked)</label>
+        </div>
+        
+        <div class="form-element checkbox-container">
+            <input type="checkbox" class="checkbox-default" id="subscribe2">
+            <label for="subscribe2" class="checkbox-label">Subscribe (unchecked)</label>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <h3 class="form-group-title">Radio buttons</h3>
+        
+        <div class="form-element">
+            <span>Gender:</span>
+            <div class="radio-group">
+                <div class="radio-container">
+                    <input type="radio" class="radio-default" id="male" name="gender" checked>
+                    <label for="male" class="radio-label">Male (checked)</label>
+                </div>
+                
+                <div class="radio-container">
+                    <input type="radio" class="radio-default" id="female" name="gender">
+                    <label for="female" class="radio-label">Female (unchecked)</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <h3 class="form-group-title">Buttons</h3>
+        
+        <div class="form-element">
+            <button class="button button-success">Active</button>
+            <button class="button button-success" style="pointer-events: none;">Hover (наведите курсор)</button>
+            <button class="button button-danger">Danger</button>
+            <button class="button button-danger" style="pointer-events: none;">Hover (наведите курсор)</button>
+            <button class="button button-disabled" disabled>Disabled</button>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <h3 class="form-group-title">Text area</h3>
+        
+        <div class="form-element">
+            <textarea class="textarea-default" placeholder="Enter some text..."></textarea>
+        </div>
+    </div>
+</body>
+</html>
